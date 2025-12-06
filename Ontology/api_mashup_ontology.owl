@@ -3,6 +3,14 @@
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
+#################################################################
+# Import FOAF and Dublin Core Terms
+#################################################################
+api:API_Ontology a owl:Ontology ;
+    owl:imports <http://xmlns.com/foaf/0.1/> ,
+                 <http://purl.org/dc/terms/> ;
+    rdfs:label "API and Mashup Ontology with FOAF and Dublin Core Imports"
+
 ############################################################
 # Ontology Definition
 ############################################################
@@ -118,3 +126,4 @@ api:TravelPlannerMashup a api:Mashup ;
     api:hasName "Travel Planner Mashup" ;
     api:hasComponentAPI api:GoogleMaps ;
     api:hasComponentAPI api:OpenWeather .
+
