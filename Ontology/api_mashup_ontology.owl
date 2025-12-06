@@ -1,0 +1,120 @@
+@prefix api: <http://example.org/api#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+############################################################
+# Ontology Definition
+############################################################
+
+api:APIOntology a owl:Ontology ;
+    rdfs:label "API-Centric Ecosystem Ontology" ;
+    rdfs:comment "Ontology representing APIs, their components, usage, popularity, and mashups." .
+
+############################################################
+# Core Classes
+############################################################
+
+api:API a owl:Class .
+api:APIFunction a owl:Class .
+api:APIParameter a owl:Class .
+api:APIResponse a owl:Class .
+api:APIResponseProperty a owl:Class .
+api:APICategory a owl:Class .
+api:User a owl:Class .
+api:Version a owl:Class .
+api:Rating a owl:Class .
+api:Usage a owl:Class .
+api:Requirement a owl:Class .
+api:Mashup a owl:Class ; rdfs:subClassOf api:API .
+api:PopularityMetric a owl:Class .
+api:CoOccurrenceMetric a owl:Class .
+
+############################################################
+# Object Properties (Ensuring All Classes Are Connected)
+############################################################
+
+# API Structure
+api:hasFunction a owl:ObjectProperty ; rdfs:domain api:API ; rdfs:range api:APIFunction .
+api:hasParameter a owl:ObjectProperty ; rdfs:domain api:APIFunction, api:API ; rdfs:range api:APIParameter .
+api:hasResponse a owl:ObjectProperty ; rdfs:domain api:APIFunction, api:API ; rdfs:range api:APIResponse .
+api:hasProperty a owl:ObjectProperty ; rdfs:domain api:APIResponse ; rdfs:range api:APIResponseProperty .
+
+# Classification
+api:hasCategory a owl:ObjectProperty ; rdfs:domain api:API ; rdfs:range api:APICategory .
+
+# Versions
+api:hasVersion a owl:ObjectProperty ; rdfs:domain api:API ; rdfs:range api:Version .
+
+# Ratings & Popularity
+api:hasRating a owl:ObjectProperty ; rdfs:domain api:API ; rdfs:range api:Rating .
+api:hasPopularityMetric a owl:ObjectProperty ; rdfs:domain api:API ; rdfs:range api:PopularityMetric .
+api:hasUsage a owl:ObjectProperty ; rdfs:domain api:API ; rdfs:range api:Usage .
+
+# Mashups
+api:hasComponentAPI a owl:ObjectProperty ; rdfs:domain api:Mashup ; rdfs:range api:API .
+
+# Co-Occurrence
+api:coOccursWith a owl:ObjectProperty ;
+    rdfs:domain api:API ; rdfs:range api:API ;
+    owl:SymmetricProperty true .
+
+# Requirements (new connection to API)
+api:hasRequirement a owl:ObjectProperty ;
+    rdfs:domain api:API ; rdfs:range api:Requirement .
+
+# Users interact with APIs
+api:usedBy a owl:ObjectProperty ;
+    rdfs:domain api:API ; rdfs:range api:User .
+
+api:rates a owl:ObjectProperty ;
+    rdfs:domain api:User ; rdfs:range api:Rating .
+
+api:recordsUsage a owl:ObjectProperty ;
+    rdfs:domain api:User ; rdfs:range api:Usage .
+
+############################################################
+# Data Properties
+############################################################
+
+api:hasName a owl:DatatypeProperty ; rdfs:range xsd:string .
+api:hasDescription a owl:DatatypeProperty ; rdfs:range xsd:string .
+api:hasProtocol a owl:DatatypeProperty ; rdfs:range xsd:string .
+api:hasAuthType a owl:DatatypeProperty ; rdfs:range xsd:string .
+api:hasRateLimitPerMinute a owl:DatatypeProperty ; rdfs:range xsd:integer .
+api:hasDocsURL a owl:DatatypeProperty ; rdfs:range xsd:anyURI .
+api:hasTag a owl:DatatypeProperty ; rdfs:range xsd:string .
+api:lastUpdated a owl:DatatypeProperty ; rdfs:range xsd:date .
+
+api:stars a owl:DatatypeProperty ; rdfs:domain api:PopularityMetric ; rdfs:range xsd:integer .
+api:downloads a owl:DatatypeProperty ; rdfs:domain api:PopularityMetric ; rdfs:range xsd:integer .
+
+api:coOccurrenceScore a owl:DatatypeProperty ; rdfs:domain api:CoOccurrenceMetric ; rdfs:range xsd:float .
+
+############################################################
+# Example Instances (Remain Valid & Connected)
+############################################################
+
+api:GoogleMaps a api:API ;
+    api:hasName "Google Maps API" ;
+    api:hasCategory api:Mapping ;
+    api:hasDocsURL <https://developers.google.com/maps> ;
+    api:hasPopularityMetric api:GoogleMapsPopularity .
+
+api:GoogleMapsPopularity a api:PopularityMetric ;
+    api:stars 9852 ;
+    api:downloads 20000000 .
+
+api:OpenWeather a api:API ;
+    api:hasName "OpenWeather API" ;
+    api:hasCategory api:Weather ;
+    api:hasPopularityMetric api:OpenWeatherPopularity .
+
+api:OpenWeatherPopularity a api:PopularityMetric ;
+    api:stars 6221 ;
+    api:downloads 12000000 .
+
+api:TravelPlannerMashup a api:Mashup ;
+    api:hasName "Travel Planner Mashup" ;
+    api:hasComponentAPI api:GoogleMaps ;
+    api:hasComponentAPI api:OpenWeather .
